@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native'
 
 const Signup = () => {
-    const [countryCode, setCountryCode] = useState('+35')
+    const [countryCode, setCountryCode] = useState('+355')
     const [phoneNumber, setphoneNumber] = useState('');
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 90;
 
@@ -15,16 +15,16 @@ const Signup = () => {
 
     const onSignUp = async () => {
         const fullNumber = `${countryCode}${phoneNumber}`
-        router.push({pathname: '/verify/[phone]', params: { phone: fullNumber }})
-    //     try {
-    //         await signUp!.create({
-    //             phoneNumber: fullNumber,
-    //         });
-    //         router.push({pathname: '/verify/[phone]', params: { phone: fullNumber }})
-    //     }
-    //     catch (e) {
-    //         console.log('Error: ', e)
-    //     }
+        try {
+            await signUp!.create({
+                phoneNumber: fullNumber,
+            });
+            signUp!.preparePhoneNumberVerification();
+            router.push({pathname: '/verify/[phone]', params: { phone: fullNumber }})
+        }
+        catch (e) {
+            console.log('Error: ', e)
+        }
     }
     
     return (
