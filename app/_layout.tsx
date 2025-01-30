@@ -2,10 +2,10 @@ import Colors from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
-import { Link, Stack, useRouter } from 'expo-router';
+import { Link, Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { StatusBar, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { ClerkProvider, ClerkLoaded, useAuth } from '@clerk/clerk-expo'
@@ -29,7 +29,8 @@ function InitialLayout() {
   });
 
   const router = useRouter();
-  const { isLoaded, isSignedIn } = useAuth()
+  const { isLoaded, isSignedIn } = useAuth();
+  const segments = useSegments();
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
@@ -43,11 +44,23 @@ function InitialLayout() {
   }, [loaded]);
 
   useEffect(() => {
-    console.log('isSignedIn: ', isSignedIn)
-  }, [isSignedIn])
+    if (!isLoaded) return;
 
-  if (!loaded) {
-    return null;
+    const inAuthGroup = segments[0] === '(authed)';
+
+    if (isSignedIn && !inAuthGroup) {
+      router.replace('/(authed)/(tabs)/home');
+    } else if (!isSignedIn) {
+      router.replace('/');
+    }
+  }, [isSignedIn]);
+
+  if (!loaded || !isLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
   }
 
   return (

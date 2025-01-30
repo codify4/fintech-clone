@@ -11,7 +11,7 @@ enum SignInType {
 }
 
 const Login = () => {
-    const [countryCode, setCountryCode] = useState('+35')
+    const [countryCode, setCountryCode] = useState('+355')
     const [phoneNumber, setphoneNumber] = useState('');
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 90;
 
@@ -71,7 +71,7 @@ const Login = () => {
                 </View>
 
                 <TouchableOpacity
-                 onPress={() => onSignIn(SignInType.Phone)}
+                    onPress={() => onSignIn(SignInType.Phone)}
                     style={[
                         defaultStyles.pillButton, 
                         phoneNumber !== '' ? styles.enabled : styles.disabled, 
