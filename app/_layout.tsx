@@ -112,6 +112,8 @@ function InitialLayout() {
           ),
         }} 
        />
+
+      <Stack.Screen name="(authed)/(tabs)" options={{headerShown: false}} />
     </Stack>
   );
 }
