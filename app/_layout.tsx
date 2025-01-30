@@ -8,6 +8,11 @@ import { useEffect } from 'react';
 import { StatusBar, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
+import { ClerkProvider, ClerkLoaded } from '@clerk/clerk-expo'
+import { tokenCache } from './cache';
+
+const CLERK_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -80,10 +85,14 @@ function InitialLayout() {
 
 const RootLayoutNav = () => {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <StatusBar />
-      <InitialLayout />
-    </GestureHandlerRootView>
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
+      <ClerkLoaded>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <StatusBar />
+          <InitialLayout />
+        </GestureHandlerRootView>
+      </ClerkLoaded>
+    </ClerkProvider>
   )
 }
 

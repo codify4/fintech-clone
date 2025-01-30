@@ -1,6 +1,7 @@
 import Colors from '@/constants/Colors'
 import { defaultStyles } from '@/constants/Styles'
-import { Link } from 'expo-router'
+import { useSignUp } from '@clerk/clerk-expo'
+import { Link, useRouter } from 'expo-router'
 import { useState } from 'react'
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native'
 
@@ -8,6 +9,23 @@ const Signup = () => {
     const [countryCode, setCountryCode] = useState('+35')
     const [phoneNumber, setphoneNumber] = useState('');
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 90;
+
+    const router = useRouter();
+    const { signUp } = useSignUp();
+
+    const onSignUp = async () => {
+        const fullNumber = `${countryCode}${phoneNumber}`
+        router.push({pathname: '/verify/[phone]', params: { phone: fullNumber }})
+    //     try {
+    //         await signUp!.create({
+    //             phoneNumber: fullNumber,
+    //         });
+    //         router.push({pathname: '/verify/[phone]', params: { phone: fullNumber }})
+    //     }
+    //     catch (e) {
+    //         console.log('Error: ', e)
+    //     }
+    }
     
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding' keyboardVerticalOffset={keyboardVerticalOffset}>
@@ -41,6 +59,7 @@ const Signup = () => {
                 <View style={{ flex: 1 }}></View>
 
                 <TouchableOpacity 
+                    onPress={onSignUp}
                     style={[
                         defaultStyles.pillButton, 
                         phoneNumber !== '' ? styles.enabled : styles.disabled, 

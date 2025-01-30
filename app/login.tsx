@@ -1,9 +1,10 @@
 import Colors from '@/constants/Colors'
 import { defaultStyles } from '@/constants/Styles'
-import { Link } from 'expo-router'
+import { Link, useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react'
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native'
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native'
+import { isClerkAPIResponseError, useSignIn } from '@clerk/clerk-expo';
 
 enum SignInType {
     Phone, Email, Google, Apple
@@ -14,16 +15,35 @@ const Login = () => {
     const [phoneNumber, setphoneNumber] = useState('');
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 90;
 
+    const router = useRouter();
+    const { signIn } = useSignIn();
+
     const onSignIn = async (type: SignInType) => {
-        switch (type) {
-            case SignInType.Phone:
-                break;
-            case SignInType.Email:
-                break;
-            case SignInType.Google:
-                break;
-            case SignInType.Apple:
-                break;
+        if(type === SignInType.Phone) {
+            const fullNumber = `${countryCode}${phoneNumber}`
+
+            try {
+                const { supportedFirstFactors } = await signIn!.create({
+                    identifier: fullNumber,
+                });
+                const firstPhoneFactor: any = supportedFirstFactors?.find((factor: any) => {
+                    return factor.strategy === 'phone_code'
+                })
+
+                const { phoneNumberId } = firstPhoneFactor;
+                await signIn!.prepareFirstFactor({
+                    strategy: 'phone_code',
+                    phoneNumberId,
+                });
+
+                router.push({pathname: '/verify/[phone]', params: { phone: fullNumber, signin: 'true' }})
+            }
+            catch (error) {
+                console.log('Error: ', JSON.stringify(error, null, 2));
+                if (isClerkAPIResponseError(error)) {
+                    Alert.alert('Error', error.errors[0].message)
+                }
+            }
         }
     }
     
@@ -50,7 +70,8 @@ const Login = () => {
                     />
                 </View>
 
-                <TouchableOpacity 
+                <TouchableOpacity
+                 onPress={() => onSignIn(SignInType.Phone)}
                     style={[
                         defaultStyles.pillButton, 
                         phoneNumber !== '' ? styles.enabled : styles.disabled, 
