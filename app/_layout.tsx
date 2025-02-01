@@ -13,7 +13,6 @@ import { tokenCache } from './cache';
 
 const CLERK_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
-
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -21,6 +20,19 @@ export {
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+const RootLayoutNav = () => {
+  return (
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
+      <ClerkLoaded>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <StatusBar />
+            <InitialLayout />
+          </GestureHandlerRootView>
+      </ClerkLoaded>
+    </ClerkProvider>
+  )
+}
 
 function InitialLayout() {
   const [loaded, error] = useFonts({
@@ -116,19 +128,6 @@ function InitialLayout() {
       <Stack.Screen name="(authed)/(tabs)" options={{headerShown: false}} />
     </Stack>
   );
-}
-
-const RootLayoutNav = () => {
-  return (
-    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
-      <ClerkLoaded>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <StatusBar />
-          <InitialLayout />
-        </GestureHandlerRootView>
-      </ClerkLoaded>
-    </ClerkProvider>
-  )
 }
 
 export default RootLayoutNav
