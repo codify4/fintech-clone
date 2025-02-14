@@ -3,7 +3,7 @@
     "name": "fintech",
     "slug": "fintech",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "runtimeVersion": "exposdk:52.0.0",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",

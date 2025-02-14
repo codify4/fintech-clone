@@ -1,10 +1,10 @@
-import Dropdown from '@/components/dropdown';
 import RoundButton from '@/components/round-btn';
 import Colors from '@/constants/Colors';
+import { useBalanceStore } from '@/store/balance-store';
 import { View, Text, ScrollView, StyleSheet } from 'react-native'
 
 const Home = () => {
-  const balance = 4124;
+  const balance = 83535;
 
   const addMoney = () => {}
 
